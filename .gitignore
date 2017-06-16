@@ -1,3 +1,4 @@
 *.svg
 *.json
+/examples
 /node_modules

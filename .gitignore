@@ -1,0 +1,3 @@
+*.svg
+*.json
+/node_modules

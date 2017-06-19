@@ -21,9 +21,22 @@ You must place two `GeoItems` inside a [Prognoz MetaInfo](http://help.prognoz.co
 
 These map opposing X/Y corners in your SVG coordinate space to Longitude/Latitude coordinates on the world. _Note that the SVG coordinate space has Y increasing down (toward the south), while Latitude increases upwards (towards the north)._
 
+
+## Preparing Paths
+
+SVG allows `<path>` elements with an arbitrary number of overlapping subpaths, with some of them being 'positive' space and some 'negative' space. In SVG these subpaths may be oriented clockwise or counter-clockwise, and added in any order.
+
+GeoJSON only allows a `Polygon` to have a single 'positive' subpath (and an arbitrary number of additional 'hole' subpaths). To make it easier for the code to detect which subpath is the 'positive' subpath you must currently:
+
+1. Have only one positive subpath per `<path>`.
+2. Ensure that the positive subpath is the first subpath in a `<path>`.
+
+
 ## TODO (AKA Known Limitations)
 
 * Control polygonization limits
 * Support modes of projection unmapping
 * Support non-rectangular, inverse bilinear unmappings
-* NeatJSON output
+* NeatJSON output controls
+* Treat `<g>` as `MultiPolygon`, `GeometryCollection`, or `MultiLineString` as appropriate. Currently items within a group are flattened as individual `Feature` items in the GeoJSON.
+* Treat `<path>` with multiple positive subpaths as a `MultiPolygon`. (This requires figuring out which holes apply to which positive subpaths.)

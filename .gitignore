@@ -1,5 +1,5 @@
 *.svg
-*.json
+*.geojson
 .DS_Store
 /examples
 /node_modules

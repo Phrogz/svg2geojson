@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const svg2geojson = require('../lib/svg2geojson.js');
+const { geoFromSVGFile } = require('../lib/svg2geojson.js');
 const args = require('minimist')(process.argv.slice(2));
 const { neatJSON } = require('neatjson');
 
@@ -8,18 +8,28 @@ const usage = `
 Usage: svg2geojson [options] file.svg
 
 Options:
- -l, --layers     Split top-level groups into separate files.
- -d, --debug      Include information about each SVG element in the features.
- -o, --stdout     Output GeoJSON to stdout.
+ -t, --tolerance=0.1 Distance (world meters) to sample curves to. (default: 10cm)
+ -l, --layers        Split top-level groups into separate files. (default: one file)
+ -o, --stdout        Output GeoJSON to stdout. (default: write files with names based on the SVG/layer)
+ -d, --debug         Include ids for each SVG element in the features. (default: no properties)
+ -h, --help          Show this help message.
 `.trim();
+
 const originalFile = args._[0];
 if (args.h || args.help) process.exit(console.log(usage));
 if (!originalFile) process.exit(console.log(usage) || 1);
 
-parseXMLFile(originalFile, doc => {
-	svg2geojson(doc, {layers:args.l||args.layers, debug:args.d||args.debug}).forEach(layer => {
+const options = {
+	layers:    args.l || args.layers,
+	debug:     args.d || args.debug,
+	tolerance: args.t || args.tolerance || 0.1
+};
+
+geoFromSVGFile(originalFile, layers => {
+	if (!options.layers) layers = [{name:'',geo:layers}];
+	layers.forEach( layer => {
 		// TODO: NeatJSON options from arguments
-		var json = neatJSON(layer.geojson, {short:0,indent:" ",wrap:800,aligned:true,decimals:6,afterColonN:1});
+		var json = neatJSON(layer.geo, {short:0,indent:" ",wrap:800,aligned:true,decimals:6,afterColonN:1});
 		if (args.o || args.stdout) console.log(`<Layer ${layer.name}>\n${json}\n\n`);
 		else {
 			const fileName = originalFile.replace( /\.[^/.]+$/, (layer.name && ('-'+layer.name)) + '.geojson' );
@@ -27,17 +37,4 @@ parseXMLFile(originalFile, doc => {
 			console.log('Wrote '+fileName);
 		}
 	});
-});
-
-function parseXMLFile(file,callback) {
-	fs.readFile(file, (err,xml) => {
-		if (err) throw err;
-		require('xml2js')
-		.Parser({ explicitChildren:1, preserveChildrenOrder:1, xmlns:1 })
-		.parseString(xml, (err,doc) => {
-			if (err) throw err;
-			callback(doc);
-		});
-	});
-}
-
+}, options);

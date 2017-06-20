@@ -5,8 +5,7 @@ Converts an SVG file with added geo-referencing tags into one or more GeoJSON fi
 
 ## Installing
 
-`npm install xml2js vmath point-at-length neatjson`
-
+`npm install svg2geojson`
 
 ## Geo-Referencing Tags
 
@@ -14,12 +13,45 @@ You must place two `GeoItems` inside a [Prognoz MetaInfo](http://help.prognoz.co
 
 ~~~xml
 <MetaInfo xmlns="http://www.prognoz.ru"><Geo>
-	<GeoItem X="-595.30" Y="-142.88" Latitude="37.375593" Longitude="-121.977795"/>
-	<GeoItem X="1388.66" Y=" 622.34" Latitude="37.369930" Longitude="-121.959404"/>
+  <GeoItem X="-595.30" Y="-142.88" Latitude="37.375593" Longitude="-121.977795"/>
+  <GeoItem X="1388.66" Y=" 622.34" Latitude="37.369930" Longitude="-121.959404"/>
 </Geo></MetaInfo>
 ~~~
 
 These map opposing X/Y corners in your SVG coordinate space to Longitude/Latitude coordinates on the world. _Note that the SVG coordinate space has Y increasing down (toward the south), while Latitude increases upwards (towards the north)._
+
+
+## Usage
+
+    # Running the binary from the command line
+    svg2geojson file.svg          # Writes file.geojson
+    svg2geojson file.svg --layers # Writes file.geojson, file-layer1Name.geojson, …
+
+    # See svg2geojson --help for more parameters
+
+~~~js
+// As a node.js library…
+const { geoFromSVGFile, geoFromSVGXML } = require('svg2geojson.js');
+
+// …reading from file on disk
+geoFromSVGFile( 'my.svg', layers => {
+	layers.forEach( layer => {
+		let json = JSON.stringify(layer.geo); // Turn JS object into JSON string
+		console.log(`Layer Named: "${layer.name}"`);
+		console.log(json);
+	});
+}, {layers:true, tolerance:0.5} );
+
+// …processing SVG code as a string
+const svg = `<svg xmlns="http://www.w3.org/2000/svg"><!-- ... --></svg>`;
+geoFromSVGXML( svg, layer => {
+	let json = JSON.stringify(layer.geo); // Turn JS object into JSON string
+	console.log(json);
+} );
+
+~~~
+
+See the output of `svg2geojson --help` for the options you can pass to the functions, and their default values.
 
 
 ## Preparing Paths
@@ -34,7 +66,6 @@ GeoJSON only allows a `Polygon` to have a single 'positive' subpath (and an arbi
 
 ## TODO (AKA Known Limitations)
 
-* Control polygonization limits
 * Support modes of projection unmapping
 * Support non-rectangular, inverse bilinear unmappings
 * NeatJSON output controls

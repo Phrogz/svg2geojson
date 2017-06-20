@@ -7,6 +7,7 @@ Converts an SVG file with added geo-referencing tags into one or more GeoJSON fi
 
 `npm install svg2geojson`
 
+
 ## Geo-Referencing Tags
 
 You must place two `GeoItems` inside a [Prognoz MetaInfo](http://help.prognoz.com/8.0/en/mergedProjects/Specifications/svgmapspecification/structure/svgmap_structure.htm) element as a direct child of the `<svg>` element at the root of your document.
@@ -23,14 +24,17 @@ These map opposing X/Y corners in your SVG coordinate space to Longitude/Latitud
 
 ## Usage
 
-    # Running the binary from the command line
-    svg2geojson file.svg          # Writes file.geojson
-    svg2geojson file.svg --layers # Writes file.geojson, file-layer1Name.geojson, …
+**Running the binary from the command line**:
 
-    # See svg2geojson --help for more parameters
+~~~
+svg2geojson file.svg          # Writes file.geojson
+svg2geojson file.svg --layers # Writes file.geojson, file-layer1Name.geojson, …
+# See svg2geojson --help for more parameters
+~~~
 
-~~~js
-// As a node.js library…
+**Running as a node.js library**:
+
+~~~ js
 const { geoFromSVGFile, geoFromSVGXML } = require('svg2geojson.js');
 
 // …reading from file on disk
@@ -48,7 +52,6 @@ geoFromSVGXML( svg, layer => {
 	let json = JSON.stringify(layer.geo); // Turn JS object into JSON string
 	console.log(json);
 } );
-
 ~~~
 
 See the output of `svg2geojson --help` for the options you can pass to the functions, and their default values.

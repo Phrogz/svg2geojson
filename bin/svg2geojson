@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const { geoFromSVGFile } = require('../lib/svg2geojson.js');
-const args = require('minimist')(process.argv.slice(2));
+const args = require('minimist')(process.argv.slice(2), {boolean:'l layer o stdout d debug'.split(' '), string:'t tolerance'.split(' ')});
 const { neatJSON } = require('neatjson');
 
 const usage = `

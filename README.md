@@ -27,12 +27,13 @@ These map opposing X/Y corners in your SVG coordinate space to Longitude/Latitud
 **Running the binary from the command line**:
 
 ~~~
-svg2geojson file.svg          # Writes file.geojson
-svg2geojson file.svg --layers # Writes file.geojson, file-layer1Name.geojson, …
+$ npm install -g svg2geojson
+$ svg2geojson file.svg          # Writes file.geojson
+$ svg2geojson file.svg --layers # Writes file.geojson, file-layer1Name.geojson, …
 # See svg2geojson --help for more parameters
 ~~~
 
-**Running as a node.js library**:
+**Running as a Node.js library**:
 
 ~~~ js
 const { geoFromSVGFile, geoFromSVGXML } = require('svg2geojson.js');
@@ -71,6 +72,6 @@ GeoJSON only allows a `Polygon` to have a single 'positive' subpath (and an arbi
 
 * Support modes of projection unmapping
 * Support non-rectangular, inverse bilinear unmappings
-* NeatJSON output controls
+* Add more command-line options to control JSON formatting.
 * Treat `<g>` as `MultiPolygon`, `GeometryCollection`, or `MultiLineString` as appropriate. Currently items within a group are flattened as individual `Feature` items in the GeoJSON.
 * Treat `<path>` with multiple positive subpaths as a `MultiPolygon`. (This requires figuring out which holes apply to which positive subpaths.)

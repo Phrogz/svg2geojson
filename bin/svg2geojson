@@ -1,28 +1,33 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const { geoFromSVGFile } = require('../lib/svg2geojson.js');
-const args = require('minimist')(process.argv.slice(2), {boolean:'l layer o stdout d debug'.split(' '), string:'t tolerance'.split(' ')});
+const { geoFromSVGFile, svg2geojsonVersion } = require('../lib/svg2geojson.js');
+const args = require('minimist')(process.argv.slice(2), {
+	alias:  {l:'layers',t:'tolerance',o:'stdout',d:'debug',v:'version',h:'help'},
+	boolean:['l','o','d','v'],
+	string: 't'});
 const { neatJSON } = require('neatjson');
 
 const usage = `
 Usage: svg2geojson [options] file.svg
 
 Options:
- -t, --tolerance=0.1 Distance (world meters) to sample curves to. (default: 10cm)
+ -t, --tolerance=0.1 Distance (world meters) to sample curves to. (default: 0.1)
  -l, --layers        Split top-level groups into separate files. (default: one file)
  -o, --stdout        Output GeoJSON to stdout. (default: write files with names based on the SVG/layer)
  -d, --debug         Include ids for each SVG element in the features. (default: no properties)
+ -v, --version       Output the version of svg2geojson as the first line on stdout (${svg2geojsonVersion}).
  -h, --help          Show this help message.
 `.trim();
 
 const originalFile = args._[0];
-if (args.h || args.help) process.exit(console.log(usage));
-if (!originalFile) process.exit(console.log(usage) || 1);
+if (args.version) console.log(svg2geojsonVersion);
+if (args.help) process.exit(console.log(usage));
+if (!originalFile) process.exit( args.version ? 0 : console.log(usage) || 1);
 
 const options = {
-	layers:    args.l || args.layers,
-	debug:     args.d || args.debug,
-	tolerance: args.t || args.tolerance || 0.1
+	layers:    args.layers,
+	debug:     args.debug,
+	tolerance: args.tolerance || 0.1
 };
 
 geoFromSVGFile(originalFile, layers => {
@@ -30,8 +35,10 @@ geoFromSVGFile(originalFile, layers => {
 	layers.forEach( layer => {
 		// TODO: NeatJSON options from arguments
 		var json = neatJSON(layer.geo, {short:0,indent:" ",wrap:800,aligned:true,decimals:6,afterColonN:1});
-		if (args.o || args.stdout) console.log(`<Layer ${layer.name}>\n${json}\n\n`);
-		else {
+		if (args.stdout) {
+			if (args.layers) console.log(`\n<Layer ${layer.name}>`);
+			console.log(json)
+		} else {
 			const fileName = originalFile.replace( /\.[^/.]+$/, (layer.name && ('-'+layer.name)) + '.geojson' );
 			fs.writeFileSync(fileName,json);
 			console.log('Wrote '+fileName);

@@ -28,13 +28,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Phrogz/svg2geojson.git"
+    "url": "git+https://github.com/qingemeng/svg2geojson.git"
   },
   "keywords": [
     "svg",
     "geojson"
   ],
-  "author": "Gavin Kistner",
+  "author": "Gemeng Qin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Phrogz/svg2geojson/issues"

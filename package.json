@@ -11,26 +11,30 @@
     "svg2geojson": "bin/svg2geojson"
   },
   "dependencies": {
+    "chai": "^4.1.2",
     "minimist": "^1.2.0",
+    "mocha": "^4.0.1",
     "neatjson": "^0.8.3",
+    "sinon": "^4.1.1",
     "svg-path-parser": "^1.0.1",
     "svg-path-to-polygons": "^0.1.0",
+    "transformation-matrix-js": "^2.7.1",
     "vmath": "^1.3.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Phrogz/svg2geojson.git"
+    "url": "git+https://github.com/qingemeng/svg2geojson.git"
   },
   "keywords": [
     "svg",
     "geojson"
   ],
-  "author": "Gavin Kistner",
+  "author": "Gemeng Qin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Phrogz/svg2geojson/issues"
